@@ -26,6 +26,8 @@ func TestParse(t *testing.T) {
 		{Spec: "abc/def@v1.2.3", Pkg: &Pkg{Path: "abc/def", HasVersion: true, Version: "v1.2.3"}},
 		{Spec: "./def@v1.2.3", Str: "abc/def@v1.2.3", Pkg: &Pkg{Path: "abc/def", HasVersion: true, Version: "v1.2.3"}, WD: "abc/"},
 		{Spec: "abc\\def\\", Str: "abc/def", Pkg: &Pkg{Path: "abc/def"}},
+		{Spec: "client", Str: "client", Pkg: &Pkg{Path: "client"}},
+		{Spec: "  spacey/	", Str: "spacey", Pkg: &Pkg{Path: "spacey"}},
 	}
 
 	for _, item := range list {
