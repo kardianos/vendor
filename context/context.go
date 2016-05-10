@@ -12,7 +12,6 @@ import (
 	"io"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"strings"
 
 	"github.com/kardianos/govendor/internal/pathos"
@@ -183,15 +182,14 @@ func NewContext(root, vendorFilePathRel, vendorFolder string, rewriteImports boo
 		if err != nil {
 			return nil, err
 		}
-		const gorootLookFor = `GOROOT=`
 		for _, line := range strings.Split(string(goEnv), "\n") {
 			if strings.HasPrefix(line, gorootLookFor) == false {
 				continue
 			}
 			goroot = strings.TrimPrefix(line, gorootLookFor)
-			goroot, err = strconv.Unquote(goroot)
+			goroot, err = gorootFromGoEnv(goroot)
 			if err != nil {
-				return nil, fmt.Errorf("Failed to unquote GOROOT: %v", err)
+				return nil, err
 			}
 			break
 		}
