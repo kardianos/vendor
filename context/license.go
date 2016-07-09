@@ -168,7 +168,9 @@ func licenseCopy(root, startIn, vendorRoot, pkgPath string) error {
 			addTo: "golang.org/x/tools"
 			$PROJ/vendor + addTo + pathos.FileTrimPrefix(folder, root) + "LICENSE"
 		*/
-		destPath := filepath.Join(vendorRoot, addTo, trimTo, name)
+
+		destDir := filepath.Join(vendorRoot, addTo, trimTo)
+		destPath := filepath.Join(destDir, name)
 
 		// Only copy if file does not exist.
 		_, err := os.Stat(destPath)
@@ -176,6 +178,9 @@ func licenseCopy(root, startIn, vendorRoot, pkgPath string) error {
 			return nil
 		}
 
+		if err := os.MkdirAll(destDir, 0777); err != nil {
+			return err
+		}
 		return copyFile(destPath, srcPath, nil)
 	})
 }
