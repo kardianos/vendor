@@ -1,7 +1,7 @@
 package vfilepath
 
 import (
-	"path/filepath"
+	"path"
 	"strings"
 )
 
@@ -9,9 +9,9 @@ func HasPrefixDir(path string, prefix string) bool {
 	return strings.HasPrefix(makeDirPath(path), makeDirPath(prefix))
 }
 
-func makeDirPath(path string) string {
-	if path = filepath.Clean(path); path != "/" {
-		path += "/"
+func makeDirPath(dirpath string) string {
+	if dirpath = path.Clean(dirpath); dirpath != "/" {
+		dirpath += "/"
 	}
-	return path
+	return dirpath
 }
