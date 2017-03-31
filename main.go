@@ -46,7 +46,7 @@ func main() {
 	if err != nil {
 		os.Exit(2)
 	}
-	if msg != help.MsgNone {
+	if msg != help.MsgNone || msg != help.MsgGovendorVersion || msg != help.MsgGovendorLicense {
 		os.Exit(1)
 	}
 }
