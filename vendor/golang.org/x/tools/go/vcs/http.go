@@ -17,15 +17,34 @@ import (
 // changed by tests, without modifying http.DefaultClient.
 var httpClient = http.DefaultClient
 
+type HTTPError struct {
+	StatusCode int
+	Status     string
+	Url        string
+}
+
+func (herr HTTPError) Error() string {
+	return fmt.Sprintf("%s: %s", herr.Url, herr.Status)
+}
+
+type RequestModifier func(req *http.Request)
+
 // httpGET returns the data from an HTTP GET request for the given URL.
-func httpGET(url string) ([]byte, error) {
-	resp, err := httpClient.Get(url)
+func httpGET(url string, mod ...RequestModifier) ([]byte, error) {
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	for i := 0; i < len(mod); i++ {
+		mod[i](req)
+	}
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("%s: %s", url, resp.Status)
+		return nil, HTTPError{Url: url, Status: resp.Status, StatusCode: resp.StatusCode}
 	}
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {

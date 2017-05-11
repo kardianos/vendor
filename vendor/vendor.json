@@ -9,6 +9,12 @@
 			"revisionTime": "2017-02-19T07:16:37Z"
 		},
 		{
+			"checksumSHA1": "Isa9x3nvIJ12hvgdvUUBty+yplU=",
+			"path": "github.com/bgentry/speakeasy",
+			"revision": "675b82c74c0ed12283ee81ba8a534c8982c07b85",
+			"revisionTime": "2016-10-13T10:26:35Z"
+		},
+		{
 			"checksumSHA1": "6VGFARaK8zd23IAiDf7a+gglC8k=",
 			"path": "github.com/dchest/safefile",
 			"revision": "855e8d98f1852d48dde521e0522408d1fe7e836a",

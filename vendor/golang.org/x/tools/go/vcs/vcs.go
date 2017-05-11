@@ -5,17 +5,21 @@
 package vcs // import "golang.org/x/tools/go/vcs"
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/bgentry/speakeasy"
 )
 
 // Verbose enables verbose operation logging.
@@ -663,6 +667,27 @@ func noVCSSuffix(match map[string]string) error {
 	return nil
 }
 
+func askuserpwd(url string) func(r *http.Request) {
+	return func(r *http.Request) {
+		fmt.Printf("username/password is required for %s\n", url)
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Printf("username: ")
+		uname, err := reader.ReadString('\n')
+		if nil != err {
+			log.Printf("could not read username from console input")
+			return
+		}
+		fmt.Print("\n")
+		passwd, err := speakeasy.Ask("password: ")
+		if nil != err {
+			log.Printf("could not read password from console input")
+			return
+		}
+		fmt.Print("\n")
+		r.SetBasicAuth(uname, passwd)
+	}
+}
+
 // bitbucketVCS determines the version control system for a
 // Bitbucket repository, by using the Bitbucket API.
 func bitbucketVCS(match map[string]string) error {
@@ -674,9 +699,19 @@ func bitbucketVCS(match map[string]string) error {
 		SCM string `json:"scm"`
 	}
 	url := expand(match, "https://api.bitbucket.org/1.0/repositories/{bitname}")
-	data, err := httpGET(url)
-	if err != nil {
-		return err
+	var data []byte
+	var err error
+	modifiers := []RequestModifier{}
+	for i := 0; i < 2; i++ {
+		data, err = httpGET(url, modifiers...)
+		if err != nil {
+			if e, ok := err.(HTTPError); ok && e.StatusCode == 403 && i == 0 {
+				modifiers = append(modifiers, askuserpwd(e.Url))
+				continue
+			}
+			return err
+		}
+		break
 	}
 	if err := json.Unmarshal(data, &resp); err != nil {
 		return fmt.Errorf("decoding %s: %v", url, err)
