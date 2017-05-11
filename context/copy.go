@@ -100,7 +100,7 @@ func (ctx *Context) CopyPackage(destPath, srcPath, lookRoot, pkgPath string, ign
 fileLoop:
 	for _, fi := range fl {
 		name := fi.Name()
-		if name[0] == '.' {
+		if !tree && name[0] == '.' {
 			continue
 		}
 		if fi.IsDir() {
