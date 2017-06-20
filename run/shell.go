@@ -32,7 +32,7 @@ func (r *runner) Shell(w io.Writer, subCmdArgs []string) (help.HelpMessage, erro
 	}
 
 	if *pprofHandlerAddr != "" {
-		go tryEnableHTTPPprofHandler(*pprofHandlerAddr)
+		tryEnableHTTPPprofHandler(*pprofHandlerAddr)
 	}
 
 	out := os.Stdout
@@ -77,16 +77,18 @@ func (r *runner) Shell(w io.Writer, subCmdArgs []string) (help.HelpMessage, erro
 func tryEnableHTTPPprofHandler(addr string) {
 	l, err := net.Listen("tcp", addr)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "http/pprof handler failed to create a listener: %v\n", err)
+		fmt.Fprintf(os.Stderr, "http/pprof handlers failed to create a listener: %v\n", err)
 		return
 	}
-	defer l.Close()
 	// port 0 means a randomly allocated one, so we
 	// need to figure out where our listener ended up
 	realAddr := l.Addr()
 
-	fmt.Fprintf(os.Stderr, "http/pprof handler are available on %v\n", realAddr)
-	if err := http.Serve(l, nil); err != nil {
-		fmt.Fprintf(os.Stderr, "http/pprof handler failed to start: %v\n", err)
-	}
+	fmt.Fprintf(os.Stderr, "http/pprof handlers are available on %v\n", realAddr)
+	go func() {
+		defer l.Close()
+		if err := http.Serve(l, nil); err != nil {
+			fmt.Fprintf(os.Stderr, "http/pprof handlers failed to start: %v\n", err)
+		}
+	}()
 }

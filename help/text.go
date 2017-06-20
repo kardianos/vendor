@@ -165,6 +165,8 @@ var helpLicense = `govendor license [options] ( +status or package-spec )
 `
 var helpShell = `govendor shell
 	Open a govendor "shell". Useful for faster queries on large projects.
+	Options:
+		-pprof-handler    expose a pprof HTTP server on the given address
 `
 
 var msgGovendorVersion = version + `
