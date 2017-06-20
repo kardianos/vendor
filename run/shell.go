@@ -23,7 +23,7 @@ import (
 func (r *runner) Shell(w io.Writer, subCmdArgs []string) (help.HelpMessage, error) {
 	flags := flag.NewFlagSet("shell", flag.ContinueOnError)
 
-	pprofHandlerAddr := flags.String("pprof-handler", "localhost:0", "if set, turns on an HTTP server that offers pprof handlers")
+	pprofHandlerAddr := flags.String("pprof-handler", "", "if set, turns on an HTTP server that offers pprof handlers")
 
 	flags.SetOutput(nullWriter{})
 	err := flags.Parse(subCmdArgs)
