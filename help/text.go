@@ -15,6 +15,8 @@ import (
 var helpFull = `govendor (` + version + `): record dependencies and copy into vendor folder
 	-govendor-licenses    Show govendor's licenses.
 	-version              Show govendor version
+	-cpuprofile 'file'    Writes a CPU profile to 'file' for debugging.
+	-memprofile 'file'    Writes a heap profile to 'file' for debugging.
 
 Sub-Commands
 
