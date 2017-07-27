@@ -5,7 +5,7 @@
 go get -u github.com/kardianos/govendor
 cd $GOPATH/src/github.com/kardianos/govendor
 go build
-# cp ./govendor to your path
+# cp $GOPATH/bin/govendor to your path
 ```
 New users please read the [FAQ](doc/faq.md)
 
