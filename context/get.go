@@ -18,7 +18,6 @@ import (
 
 func Get(logger io.Writer, pkgspecName string, insecure bool) (*pkgspec.Pkg, error) {
 	// Get the GOPATHs.
-	bytebuf := new(bytes.Buffer)
 	cmd := exec.Command("go", "env", "GOPATH")
 	all, err := cmd.CombinedOutput()
 	if err != nil {
