@@ -23,7 +23,7 @@ func Get(logger io.Writer, pkgspecName string, insecure bool) (*pkgspec.Pkg, err
 	if err != nil {
 		return nil, err
 	}
-	gopathList := filepath.SplitList(all)
+	gopathList := filepath.SplitList(string(all))
 	gopath := gopathList[0]
 
 	cwd, err := os.Getwd()
