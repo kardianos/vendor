@@ -9,7 +9,6 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"bytes"
 	"path/filepath"
 
 	"github.com/kardianos/govendor/pkgspec"
