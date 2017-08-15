@@ -19,11 +19,10 @@ func Get(logger io.Writer, pkgspecName string, insecure bool) (*pkgspec.Pkg, err
 	// Get the GOPATHs.
 	bytebuf := new(bytes.Buffer)
 	cmd := os.exec.Command("go", "env", "GOPATH")
-	cmd.Stdout = bytebuf
-	if cmd.Run() != nil {
-		return nil, ErrMissingGOPATH
+	all, err := cmd.CombinedOutput()
+	if err != nil {
+		return nil, err
 	}
-	all := cmd.Stdout.String()
 	gopathList := filepath.SplitList(all)
 	gopath := gopathList[0]
 
