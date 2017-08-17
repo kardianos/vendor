@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/kardianos/govendor/pkgspec"
 	"golang.org/x/tools/go/vcs"
