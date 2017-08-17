@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/kardianos/govendor/pkgspec"
 	"golang.org/x/tools/go/vcs"
@@ -22,7 +23,7 @@ func Get(logger io.Writer, pkgspecName string, insecure bool) (*pkgspec.Pkg, err
 	if err != nil {
 		return nil, err
 	}
-	gopathList := filepath.SplitList(string(all))
+	gopathList := filepath.SplitList(strings.Replace(string(all), "\n", "", -1))
 	gopath := gopathList[0]
 
 	cwd, err := os.Getwd()
