@@ -253,6 +253,23 @@ func (f *fetcher) op(op *Operation) ([]*Operation, error) {
 				}
 			}
 
+			// Look for tree match in explicit imports
+			for _, item := range f.Ctx.TreeImport {
+				if item.Path != dep && !strings.HasPrefix(dep, item.Path+"/") {
+					continue
+				}
+				if len(item.Origin) > 0 {
+					origin = path.Join(item.PathOrigin(), strings.TrimPrefix(dep, item.Path))
+					hasOrigin = true
+				}
+				if len(item.Version) > 0 {
+					version = item.Version
+					hasVersion = true
+					revision = ""
+				}
+				break
+			}
+
 			f.HavePkg[dep] = true
 			dest := filepath.Join(f.Ctx.RootDir, f.Ctx.VendorFolder, dep)
 
