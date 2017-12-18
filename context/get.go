@@ -65,7 +65,7 @@ func get(logger io.Writer, gopath string, ps *pkgspec.Pkg, insecure bool) error 
 	if err != nil {
 		return err
 	}
-	ctx, err := NewContext(repoRootDir, filepath.Join("vendor", vendorFilename), "vendor", false)
+	ctx, err := NewContext(nil, repoRootDir, filepath.Join("vendor", vendorFilename), "vendor", false)
 	if err != nil {
 		return err
 	}

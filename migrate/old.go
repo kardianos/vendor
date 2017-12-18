@@ -33,7 +33,7 @@ func (sysInternal) Migrate(root string) error {
 	// Un-rewrite import paths.
 	// Copy files from internal to vendor.
 	// Update and move vendor file from "internal/vendor.json" to "vendor.json".
-	ctx, err := context.NewContext(root, filepath.Join("internal", "vendor.json"), "internal", true)
+	ctx, err := context.NewContext(nil, root, filepath.Join("internal", "vendor.json"), "internal", true)
 	if err != nil {
 		return err
 	}
@@ -84,7 +84,7 @@ func (sys sysOldVendor) Check(root string) (system, error) {
 	return nil, nil
 }
 func (sysOldVendor) Migrate(root string) error {
-	ctx, err := context.NewContext(root, "vendor.json", "vendor", false)
+	ctx, err := context.NewContext(nil, root, "vendor.json", "vendor", false)
 	if err != nil {
 		return err
 	}

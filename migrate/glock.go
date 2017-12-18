@@ -44,7 +44,7 @@ func (sysGlock) Migrate(root string) error {
 		vf := &vendorfile.File{}
 		vf.Package = make([]*vendorfile.Package, 0, len(lines))
 	*/
-	ctx, err := context.NewContext(root, filepath.Join("vendor", "vendor.json"), "vendor", false)
+	ctx, err := context.NewContext(nil, root, filepath.Join("vendor", "vendor.json"), "vendor", false)
 	if err != nil {
 		return err
 	}

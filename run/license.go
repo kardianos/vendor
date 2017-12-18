@@ -56,7 +56,7 @@ func (r *runner) License(w io.Writer, subCmdArgs []string) (help.HelpMessage, er
 		output = f
 	}
 
-	ctx, err := r.NewContextWD(context.RootVendorOrWD)
+	ctx, err := r.NewContextWD(nil, context.RootVendorOrWD)
 	if err != nil {
 		return checkNewContextError(err)
 	}

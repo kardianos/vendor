@@ -75,14 +75,17 @@ func (r *runner) Modify(w io.Writer, subCmdArgs []string, mod context.Modify, as
 	if len(args) == 0 {
 		return msg, errors.New("missing package or status")
 	}
-	ctx, err := r.NewContextWD(context.RootVendor)
+
+	base := &context.Context{Insecure: *insecure}
+	if *verbose {
+		base.Logger = w
+	}
+
+	ctx, err := r.NewContextWD(base, context.RootVendor)
 	if err != nil {
 		return checkNewContextError(err)
 	}
-	if *verbose {
-		ctx.Logger = w
-	}
-	ctx.Insecure = *insecure
+
 	cgp, err := currentGoPath(ctx)
 	if err != nil {
 		return msg, err

@@ -22,7 +22,7 @@ import (
 var relVendorFile = filepath.Join("vendor", "vendor.json")
 
 func ctx(g *gt.GopathTest) *Context {
-	c, err := NewContext(g.Current(), relVendorFile, "vendor", false)
+	c, err := NewContext(nil, g.Current(), relVendorFile, "vendor", false)
 	if err != nil {
 		g.Fatal(err)
 	}

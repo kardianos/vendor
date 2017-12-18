@@ -35,7 +35,7 @@ func (sys sysGlide) Check(root string) (system, error) {
 
 func (sys sysGlide) Migrate(root string) error {
 	// Create a new empty config.
-	ctx, err := context.NewContext(root, filepath.Join("vendor", "vendor.json"), "vendor", false)
+	ctx, err := context.NewContext(nil, root, filepath.Join("vendor", "vendor.json"), "vendor", false)
 	if err != nil {
 		return err
 	}

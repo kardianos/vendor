@@ -20,7 +20,6 @@ import (
 
 	"github.com/kardianos/govendor/internal/pathos"
 	"github.com/kardianos/govendor/vendorfile"
-
 	"golang.org/x/tools/go/vcs"
 )
 
