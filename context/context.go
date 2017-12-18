@@ -36,8 +36,9 @@ func dprintf(f string, v ...interface{}) {
 
 // Context represents the current project context.
 type Context struct {
-	Logger   io.Writer // Write to the verbose log.
-	Insecure bool      // Allow insecure network operations
+	Logger        io.Writer // Write to the verbose log.
+	Insecure      bool      // Allow insecure network operations
+	AllowExternal bool      // Allow even if project root is outside of GOPATH.
 
 	GopathList []string // List of GOPATHs in environment. Includes "src" dir.
 	Goroot     string   // The path to the standard library.
@@ -151,7 +152,7 @@ func NewEnv() (Env, error) {
 
 // NewContextWD creates a new context. It looks for a root folder by finding
 // a vendor file.
-func NewContextWD(rt RootType) (*Context, error) {
+func NewContextWD(base *Context, rt RootType) (*Context, error) {
 	wd, err := os.Getwd()
 	if err != nil {
 		return nil, err
@@ -194,20 +195,20 @@ func NewContextWD(rt RootType) (*Context, error) {
 		return nil, ErrOldVersion{`Use the "migrate" command to update.`}
 	}
 
-	return NewContextRoot(root)
+	return NewContextRoot(base, root)
 }
 
 // NewContextRoot creates a new context for the given root folder.
-func NewContextRoot(root string) (*Context, error) {
+func NewContextRoot(base *Context, root string) (*Context, error) {
 	pathToVendorFile := filepath.Join("vendor", vendorFilename)
 	vendorFolder := "vendor"
 
-	return NewContext(root, pathToVendorFile, vendorFolder, false)
+	return NewContext(base, root, pathToVendorFile, vendorFolder, false)
 }
 
 // NewContext creates new context from a given root folder and vendor file path.
 // The vendorFolder is where vendor packages should be placed.
-func NewContext(root, vendorFilePathRel, vendorFolder string, rewriteImports bool) (*Context, error) {
+func NewContext(base *Context, root, vendorFilePathRel, vendorFolder string, rewriteImports bool) (*Context, error) {
 	dprintf("CTX: %s\n", root)
 	var err error
 
@@ -243,41 +244,44 @@ func NewContext(root, vendorFilePathRel, vendorFolder string, rewriteImports boo
 
 	vendorFilePath := filepath.Join(root, vendorFilePathRel)
 
-	ctx := &Context{
-		RootDir:    root,
-		GopathList: gopathGoroot,
-		Goroot:     goroot,
-
-		VendorFilePath:   vendorFilePath,
-		VendorFolder:     vendorFolder,
-		RootToVendorFile: pathos.SlashToImportPath(rootToVendorFile),
-
-		VendorDiscoverFolder: "vendor",
-
-		Package: make(map[string]*Package),
-
-		RewriteRule: make(map[string]string, 3),
-
-		rewriteImports: rewriteImports,
+	if base == nil {
+		base = &Context{}
 	}
 
-	ctx.RootImportPath, ctx.RootGopath, err = ctx.findImportPath(root)
+	base.RootDir = root
+	base.GopathList = gopathGoroot
+	base.Goroot = goroot
+	base.VendorFilePath = vendorFilePath
+	base.VendorFolder = vendorFolder
+	base.RootToVendorFile = pathos.SlashToImportPath(rootToVendorFile)
+	base.VendorDiscoverFolder = "vendor"
+	base.Package = make(map[string]*Package)
+	base.RewriteRule = make(map[string]string, 3)
+	base.rewriteImports = rewriteImports
+
+	base.RootImportPath, base.RootGopath, err = base.findImportPath(root)
 	if err != nil {
-		return nil, err
+		if _, ok := err.(ErrNotInGOPATH); !ok {
+			return nil, err
+		}
+
+		if !base.AllowExternal {
+			return nil, err
+		}
 	}
 
-	vf, err := readVendorFile(path.Join(ctx.RootImportPath, vendorFolder)+"/", vendorFilePath)
+	vf, err := readVendorFile(path.Join(base.RootImportPath, vendorFolder)+"/", vendorFilePath)
 	if err != nil {
 		if !os.IsNotExist(err) {
 			return nil, err
 		}
 		vf = &vendorfile.File{}
 	}
-	ctx.VendorFile = vf
+	base.VendorFile = vf
 
-	ctx.IgnoreBuildAndPackage(vf.Ignore)
+	base.IgnoreBuildAndPackage(vf.Ignore)
 
-	return ctx, nil
+	return base, nil
 }
 
 // IgnoreBuildAndPackage takes a space separated list of tags or package prefixes

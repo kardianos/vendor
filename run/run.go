@@ -28,12 +28,12 @@ type runner struct {
 	ctx *context.Context
 }
 
-func (r *runner) NewContextWD(rt context.RootType) (*context.Context, error) {
+func (r *runner) NewContextWD(base *context.Context, rt context.RootType) (*context.Context, error) {
 	if r.ctx != nil {
 		return r.ctx, nil
 	}
 	var err error
-	r.ctx, err = context.NewContextWD(rt)
+	r.ctx, err = context.NewContextWD(base, rt)
 	return r.ctx, err
 }
 

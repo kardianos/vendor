@@ -26,13 +26,13 @@ func (r *runner) List(w io.Writer, subCmdArgs []string) (help.HelpMessage, error
 		return help.MsgList, err
 	}
 	args := listFlags.Args()
-	// fmt.Printf("Status: %q\n", f.Status)
 
 	// Print all listed status.
-	ctx, err := r.NewContextWD(context.RootVendorOrWD)
+	ctx, err := r.NewContextWD(&context.Context{AllowExternal: true}, context.RootVendorOrWD)
 	if err != nil {
 		return checkNewContextError(err)
 	}
+
 	cgp, err := currentGoPath(ctx)
 	if err != nil {
 		return help.MsgNone, err

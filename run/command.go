@@ -24,7 +24,7 @@ func (r *runner) Init(w io.Writer, subCmdArgs []string) (help.HelpMessage, error
 	if err != nil {
 		return help.MsgInit, err
 	}
-	ctx, err := r.NewContextWD(context.RootWD)
+	ctx, err := r.NewContextWD(nil, context.RootWD)
 	if err != nil {
 		return help.MsgNone, err
 	}
@@ -85,7 +85,7 @@ func (r *runner) Get(w io.Writer, subCmdArgs []string) (help.HelpMessage, error)
 }
 
 func (r *runner) GoCmd(subcmd string, args []string) (help.HelpMessage, error) {
-	ctx, err := r.NewContextWD(context.RootVendorOrWDOrFirstGOPATH)
+	ctx, err := r.NewContextWD(nil, context.RootVendorOrWDOrFirstGOPATH)
 	if err != nil {
 		return help.MsgNone, err
 	}
@@ -137,7 +137,7 @@ func (r *runner) Status(w io.Writer, subCmdArgs []string) (help.HelpMessage, err
 	if err != nil {
 		return help.MsgStatus, err
 	}
-	ctx, err := r.NewContextWD(context.RootVendor)
+	ctx, err := r.NewContextWD(nil, context.RootVendor)
 	if err != nil {
 		return help.MsgStatus, err
 	}

@@ -22,11 +22,14 @@ func (r *runner) Sync(w io.Writer, subCmdArgs []string) (help.HelpMessage, error
 	if err != nil {
 		return help.MsgSync, err
 	}
-	ctx, err := r.NewContextWD(context.RootVendor)
+	ctx, err := r.NewContextWD(&context.Context{
+		Insecure:      *insecure,
+		AllowExternal: true,
+	}, context.RootVendor)
 	if err != nil {
 		return help.MsgSync, err
 	}
-	ctx.Insecure = *insecure
+
 	if *dryrun || *verbose {
 		ctx.Logger = w
 	}

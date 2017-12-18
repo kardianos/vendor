@@ -30,7 +30,7 @@ func (sys sysGdm) Check(root string) (system, error) {
 func (sys sysGdm) Migrate(root string) error {
 	gdmFilePath := filepath.Join(root, "Godeps")
 
-	ctx, err := context.NewContext(root, filepath.Join("vendor", "vendor.json"), "vendor", false)
+	ctx, err := context.NewContext(nil, root, filepath.Join("vendor", "vendor.json"), "vendor", false)
 	if err != nil {
 		return err
 	}

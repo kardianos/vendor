@@ -37,7 +37,7 @@ func (sysGodep) Migrate(root string) error {
 	vendorPath := path.Join("Godeps", "_workspace", "src")
 	godepFilePath := filepath.Join(root, "Godeps", "Godeps.json")
 
-	ctx, err := context.NewContext(root, "vendor.json", vendorFilePath, true)
+	ctx, err := context.NewContext(nil, root, "vendor.json", vendorFilePath, true)
 	if err != nil {
 		return err
 	}
