@@ -29,6 +29,10 @@ func Getenv(key string) string {
 	return os.Getenv(key)
 }
 
+func LookupEnv(key string) (string, bool) {
+	return os.LookupEnv(key)
+}
+
 func Open(name string) (*os.File, error) {
 	l("open", name)
 	return os.Open(name)

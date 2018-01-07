@@ -20,22 +20,18 @@ import (
 )
 
 type fetcher struct {
-	Ctx       *Context
-	CacheRoot string
-	HavePkg   map[string]bool
+	Ctx     *Context
+	HavePkg map[string]bool
 }
 
 func newFetcher(ctx *Context) (*fetcher, error) {
-	// GOPATH here includes the "src" dir, go up one level.
-	cacheRoot := filepath.Join(ctx.RootGopath, "..", ".cache", "govendor")
-	err := os.MkdirAll(cacheRoot, 0700)
+	err := os.MkdirAll(ctx.CacheRoot, 0700)
 	if err != nil {
 		return nil, err
 	}
 	return &fetcher{
-		Ctx:       ctx,
-		CacheRoot: cacheRoot,
-		HavePkg:   make(map[string]bool, 30),
+		Ctx:     ctx,
+		HavePkg: make(map[string]bool, 30),
 	}, nil
 }
 
@@ -71,10 +67,10 @@ func (f *fetcher) op(op *Operation) ([]*Operation, error) {
 	// Get any tags.
 	// If we have a specific revision, update to that revision.
 
-	pkgDir := filepath.Join(f.CacheRoot, pathos.SlashToFilepath(ps.PathOrigin()))
-	sysVcsCmd, repoRoot, err := vcs.FromDir(pkgDir, f.CacheRoot)
+	pkgDir := filepath.Join(f.Ctx.CacheRoot, pathos.SlashToFilepath(ps.PathOrigin()))
+	sysVcsCmd, repoRoot, err := vcs.FromDir(pkgDir, f.Ctx.CacheRoot)
 	var vcsCmd *VCSCmd
-	repoRootDir := filepath.Join(f.CacheRoot, repoRoot)
+	repoRootDir := filepath.Join(f.Ctx.CacheRoot, repoRoot)
 	if err != nil {
 		rr, err := vcs.RepoRootForImportPath(ps.PathOrigin(), false)
 		if err != nil {
@@ -89,7 +85,7 @@ func (f *fetcher) op(op *Operation) ([]*Operation, error) {
 
 		vcsCmd = updateVcsCmd(rr.VCS)
 		repoRoot = rr.Root
-		repoRootDir = filepath.Join(f.CacheRoot, repoRoot)
+		repoRootDir = filepath.Join(f.Ctx.CacheRoot, repoRoot)
 
 		err = vcsCmd.Create(repoRootDir, rr.Repo)
 		if err != nil {
@@ -175,7 +171,7 @@ func (f *fetcher) op(op *Operation) ([]*Operation, error) {
 	// Once downloaded, be sure to set the revision and revisionTime
 	// in the vendor file package.
 	// Find the VCS information.
-	system, err := gvvcs.FindVcs(f.CacheRoot, op.Src)
+	system, err := gvvcs.FindVcs(f.Ctx.CacheRoot, op.Src)
 	if err != nil {
 		return nextOps, fmt.Errorf("failed to find vcs in %q %v", op.Src, err)
 	}

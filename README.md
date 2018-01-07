@@ -180,3 +180,12 @@ Packages are identified by their name, they should contain a "/" character
 	"ignore": "test appengine foo/",
 }
 ```
+
+## Cache
+
+By default govendor stores cache in the `$GOPATH/.cache/govendor` subfolder.
+This can be changed by setting `CACHE_ROOT` environment variable.
+
+```
+CACHE_ROOT=.cache govendor sync
+```

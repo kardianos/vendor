@@ -45,6 +45,7 @@ type Context struct {
 	RootDir        string // Full path to the project root.
 	RootGopath     string // The GOPATH the project is in.
 	RootImportPath string // The import path to the project.
+	CacheRoot      string // The path to cache directory
 
 	VendorFile       *vendorfile.File
 	VendorFilePath   string // File path to vendor file.
@@ -263,6 +264,12 @@ func NewContext(root, vendorFilePathRel, vendorFolder string, rewriteImports boo
 	if err != nil {
 		return nil, err
 	}
+
+	cacheRoot, ok := os.LookupEnv("CACHE_ROOT")
+	if !ok {
+		cacheRoot = filepath.Join(ctx.RootGopath, "..", ".cache", "govendor")
+	}
+	ctx.CacheRoot = cacheRoot
 
 	vf, err := readVendorFile(path.Join(ctx.RootImportPath, vendorFolder)+"/", vendorFilePath)
 	if err != nil {

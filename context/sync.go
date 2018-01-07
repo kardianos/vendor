@@ -293,9 +293,7 @@ func (ctx *Context) Sync(dryrun bool) (err error) {
 	if err != nil {
 		return fmt.Errorf("Failed to verify checksums: %v", err)
 	}
-	// GOPATH includes the src dir, move up a level.
-	cacheRoot := filepath.Join(ctx.RootGopath, "..", ".cache", "govendor")
-	err = os.MkdirAll(cacheRoot, 0700)
+	err = os.MkdirAll(ctx.CacheRoot, 0700)
 	if err != nil {
 		return err
 	}
@@ -323,12 +321,12 @@ func (ctx *Context) Sync(dryrun bool) (err error) {
 		if dryrun {
 			continue
 		}
-		pkgDir := filepath.Join(cacheRoot, from)
+		pkgDir := filepath.Join(ctx.CacheRoot, from)
 
 		// See if repo exists.
-		sysVcsCmd, repoRoot, err := vcs.FromDir(pkgDir, cacheRoot)
+		sysVcsCmd, repoRoot, err := vcs.FromDir(pkgDir, ctx.CacheRoot)
 		var vcsCmd *VCSCmd
-		repoRootDir := filepath.Join(cacheRoot, repoRoot)
+		repoRootDir := filepath.Join(ctx.CacheRoot, repoRoot)
 		if err != nil {
 			rr, err := vcs.RepoRootForImportPath(from, false)
 			if err != nil {
@@ -343,7 +341,7 @@ func (ctx *Context) Sync(dryrun bool) (err error) {
 			vcsCmd = updateVcsCmd(rr.VCS)
 
 			repoRoot = rr.Root
-			repoRootDir = filepath.Join(cacheRoot, repoRoot)
+			repoRootDir = filepath.Join(ctx.CacheRoot, repoRoot)
 			err = os.MkdirAll(repoRootDir, 0700)
 			if err != nil {
 				rem = append(rem, remoteFailure{Msg: "failed to make repo root dir", Path: vp.Path, Err: err})
