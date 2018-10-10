@@ -1,6 +1,21 @@
 # The Vendor Tool for Go
 `go get -u github.com/kardianos/govendor`
 
+# Superseded by go modules in Go 1.11
+See modules documentation:
+- [Wiki](https://github.com/golang/go/wiki/Modules)
+- [Go cmd](https://godoc.org/cmd/go#hdr-Preliminary_module_support)
+
+To switch to modules from govendor you need to:
+- ```alias vgo="GO111MODULE=on go"```  - modules are not enabled for projects inside GOPATH,
+but external tools like linters do not yet support modules,
+until thay do we want to manage our dependencies with modules, but keep them vendored.
+This limitation should be resolved by the time Go 1.12 is released.
+- ```vgo mod init``` - this creates go.mod file and populates it with versions from govendor's vendor.json file.
+- ```vgo mod vendor``` - this will download and vendor all deps. Run this command every time you add/update/delete dependencies. This step can fail due to "semantic import versioning", you might be required to fix imports in your code by adding version suffix (/v2, /v3 etc), see wiki above for details.
+- ```go build ./cmd/...``` - build your package using regular go command, so it uses files from vendor dir, only use vgo alias for managing dependencies. Once you're comfortable getting rid of GOPATH you can remove alias and vendor dir from your project.
+
+# Docs
 New users please read the [FAQ](doc/faq.md)
 
 Package developers should read the [developer guide](doc/dev-guide.md).
