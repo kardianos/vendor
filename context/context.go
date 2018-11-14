@@ -331,7 +331,7 @@ func (ctx *Context) findPackageChild(ck *Package) []*Package {
 		if pkg == ck {
 			continue
 		}
-		if pkg.inVendor == false {
+		if !pkg.inVendor {
 			continue
 		}
 		if pkg.Status.Presence == PresenceTree {
@@ -349,10 +349,10 @@ func (ctx *Context) findPackageChild(ck *Package) []*Package {
 func (ctx *Context) findPackageParentTree(ck *Package) []string {
 	out := make([]string, 0, 1)
 	for _, pkg := range ctx.Package {
-		if pkg.inVendor == false {
+		if !pkg.inVendor {
 			continue
 		}
-		if pkg.IncludeTree == false || pkg == ck {
+		if !pkg.IncludeTree || pkg == ck {
 			continue
 		}
 		// pkg.Path = github.com/usera/pkg, tree = true

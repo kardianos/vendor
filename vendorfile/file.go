@@ -152,7 +152,7 @@ loop:
 				continue loop
 			}
 			*field = value
-			if value == true {
+			if value {
 				break loop
 			}
 		}
@@ -173,7 +173,7 @@ func setObject(fieldObj interface{}, object map[string]interface{}, names []stri
 		}
 	case bool:
 		for i, name := range names {
-			if i != 0 || (hideEmpty && field == false) {
+			if i != 0 || (hideEmpty && !field) {
 				delete(object, name)
 				continue
 			}

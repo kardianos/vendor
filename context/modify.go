@@ -467,7 +467,7 @@ func (ctx *Context) modifyRemove(pkg *Package) error {
 		return nil
 	}
 	// Protect non-project paths from being removed.
-	if pathos.FileHasPrefix(pkg.Dir, ctx.RootDir) == false {
+	if !pathos.FileHasPrefix(pkg.Dir, ctx.RootDir) {
 		return nil
 	}
 	if pkg.Status.Location == LocationLocal {
@@ -566,7 +566,7 @@ func (ctx *Context) Check() []*Conflict {
 // Operation listed in the OpIndex field.
 func (ctx *Context) ResloveApply(cc []*Conflict) {
 	for _, c := range cc {
-		if c.Resolved == false {
+		if !c.Resolved {
 			continue
 		}
 		for i, op := range c.Operation {
